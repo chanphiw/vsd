@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>LV VSD</title>
+    <meta name="description" content="Rated" />
+    <style></style>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.8/angular.min.js"></script>
+    <script src="https://morgul.github.io/ui-bootstrap4/ui-bootstrap-tpls-3.0.6.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
+    <script>
+      angular
+        .module("app", ["ui.bootstrap"])
+        .controller("uhv", function ($scope, $http) {
+          $http.get("Trouble.json").then(
+            function successCallback(response) {
+              $scope.codes = response.data
+              console.log("Motor Rated : ")
+              console.log(response.data)
+            },
+            function errorCallback(response) {
+              console.log("Unable to perform get request")
+            }
+          )
+        })
+        .filter("myfilter", function () {
+          return function (x) {
+            var i,
+              c,
+              txt = ""
+            for (i = 0; i < x.length; i++) {
+              c = x[i]
+
+              c = c.toUpperCase()
+
+              txt += c
+            }
+            return txt
+          }
+        })
+    </script>
+  </head>
+
+  <body class="container">
+    <p id="demo"></p>
+    <nav style="text-align: center">
+      <img
+        src="img/ACS800_LV.jpeg"
+        alt="umc_pic"
+        width="350px"
+        height="250px"
+      />
+      <img src="img/ACS800.webp" alt="display" width="250px" height="250px" />
+    </nav>
+
+    <script>
+      const d = new Date()
+      document.getElementById("demo").innerHTML = d
+    </script>
+    <div ng-app="app" ng-controller="uhv">
+      <h2 class="text-center mt-2" style="background-color: rgb(237, 80, 230)">
+        ระบบค้นหา : Trouble Shooting LV VSD ACS800
+      </h2>
+      <div class="row">
+        <div class="col-lg-12">
+          <table class="table table-hover">
+            <thead>
+              <tr
+                class="text-start"
+                style="background-color: rgb(100, 226, 207)"
+              >
+                <th scope="col"></th>
+                <th scope="col">Error Code</th>
+                <th scope="col">Cause : สาเหตุที่เป็นไปได้?</th>
+                <th scope="col">What to do? : วิธีการแก้ไข?</th>
+              </tr>
+            </thead>
+            <tbody class="text-start">
+              <tr style="background-color: rgb(212, 220, 220)">
+                <th scope="col"></th>
+                <th scope="col" class="text-start">
+                  <input
+                    ng-model="s.Warning"
+                    placeholder="Error Message"
+                    class="form-control input-md"
+                  />
+                </th>
+                <th scope="col">
+                  <input
+                    ng-model="s.Cause"
+                    placeholder="ค้นตามสาเหตุ Cause"
+                    class="form-control input-md"
+                  />
+                </th>
+
+                <th scope="col">
+                  <input
+                    ng-model="s.What_todo"
+                    placeholder="การตรวจสอบ / วิธีการแก้ไข : What to do?"
+                    class="form-control input-md"
+                  />
+                </th>
+              </tr>
+              <tr ng-repeat=" r in  codes.Troublelist | filter:s |limitTo: 30">
+                <td>{{ $index+1}}</td>
+                <td>{{ r.Warning}}</td>
+                <td>{{ r.Cause}}</td>
+                <td>{{ r.What_todo}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
