@@ -221,8 +221,9 @@
     }
 
     .cause-text {
-      color: var(--warning-color);
-      font-weight: 500;
+      color: #d35400;
+      font-weight: 600;
+      text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
     }
 
     .solution-text {
@@ -342,6 +343,72 @@
 
         // Initialize search filters
         $scope.s = {}
+
+        // Thai translation function for solutions
+        $scope.translateSolution = function (englishText) {
+          if (!englishText) return ''
+
+          const translations = {
+            // Temperature related
+            "Check ambient conditions": "ตรวจสอบสภาพแวดล้อม",
+            "Check air flow and fan operation": "ตรวจสอบการไหลของอากาศและการทำงานของพัดลม",
+            "Check heatsink fins for dust pick-up": "ตรวจสอบครีบระบายความร้อนว่ามีฝุ่นสะสมหรือไม่",
+            "Check motor power against unit power": "ตรวจสอบกำลังมอเตอร์เทียบกับกำลังของยูนิต",
+
+            // Signal and wiring
+            "Check for proper analogue control signal levels": "ตรวจสอบระดับสัญญาณควบคุมแอนาล็อกให้ถูกต้อง",
+            "Check control wiring": "ตรวจสอบสายควบคุม",
+            "Check Fault Function parameters": "ตรวจสอบพารามิเตอร์ฟังก์ชันข้อผิดพลาด",
+
+            // Documentation
+            "Consult the documentation or author of the Adaptive Program": "ศึกษาเอกสารหรือติดต่อผู้เขียนโปรแกรม Adaptive",
+
+            // Download and backup
+            "Wait until download is completed": "รอจนกว่าการดาวน์โหลดจะเสร็จสิ้น",
+
+            // Battery
+            "With parallel connected inverters, enable backup battery by setting actuator 6 of switch S3 to ON": "สำหรับอินเวอร์เตอร์ที่เชื่อมต่อแบบขนาน ให้เปิดใช้งานแบตเตอรี่สำรองโดยตั้งค่า actuator 6 ของสวิตช์ S3 เป็น ON",
+            "Replace backup battery": "เปลี่ยนแบตเตอรี่สำรอง",
+
+            // Brake and chopper
+            "Stop drive. Let chopper cool down": "หยุดไดรฟ์ ปล่อยให้ chopper เย็นลง",
+            "Check parameter settings of resistor overload protection function": "ตรวจสอบการตั้งค่าพารามิเตอร์ฟังก์ชันป้องกันโอเวอร์โหลดของตัวต้านทาน",
+            "Check that braking cycle meets allowed limits": "ตรวจสอบว่ารอบการเบรกอยู่ในขีดจำกัดที่อนุญาต",
+            "Check that drive supply AC voltage is not excessive": "ตรวจสอบว่าแรงดัน AC ที่จ่ายให้ไดรฟ์ไม่มากเกินไป",
+            "See parameter group 42 BRAKE CONTROL": "ดูกลุ่มพารามิเตอร์ 42 BRAKE CONTROL",
+            "Check connection of brake acknowledgement signal": "ตรวจสอบการเชื่อมต่อสัญญาณยืนยันเบรก",
+            "Stop drive. Let resistor cool down": "หยุดไดรฟ์ ปล่อยให้ตัวต้านทานเย็นลง",
+            "Check that braking cycle meets allowed limits": "ตรวจสอบว่ารอบการเบรกอยู่ในขีดจำกัดที่อนุญาต",
+
+            // General operations
+            "Continue normal operation": "ดำเนินการปกติต่อไป",
+
+            // Common phrases
+            "see parameter group": "ดูกลุ่มพารามิเตอร์",
+            "BRAKE CHOPPER": "BRAKE CHOPPER",
+            "Stop drive": "หยุดไดรฟ์",
+            "Check": "ตรวจสอบ",
+            "Replace": "เปลี่ยน",
+            "Wait": "รอ"
+          }
+
+          let translatedText = englishText
+
+          // Replace known translations
+          Object.keys(translations).forEach(english => {
+            const regex = new RegExp(english.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi')
+            translatedText = translatedText.replace(regex, `${english} (${translations[english]})`)
+          })
+
+          return translatedText
+        }
+      })
+      .filter("trustAsHtml", function ($sce) {
+        return function (text) {
+          if (!text) return ''
+          // Replace newlines with <br> tags and trust as HTML
+          return $sce.trustAsHtml(text.replace(/\n/g, '<br>'))
+        }
       })
       .filter("myfilter", function () {
         return function (x) {
@@ -451,7 +518,7 @@
                   <span class="error-code">{{ r.Warning }}</span>
                 </td>
                 <td class="cause-text">{{ r.Cause }}</td>
-                <td class="solution-text">{{ r.What_todo }}</td>
+                <td class="solution-text" ng-bind-html="translateSolution(r.What_todo) | trustAsHtml"></td>
               </tr>
 
               <!-- No Results Message -->
