@@ -1,136 +1,488 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>LV VSD</title>
-    <meta name="description" content="Rated" />
-    <style></style>
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-      crossorigin="anonymous"
-    />
-    <script
-      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.8/angular.min.js"></script>
-    <script src="https://morgul.github.io/ui-bootstrap4/ui-bootstrap-tpls-3.0.6.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
-    <script>
-      angular
-        .module("app", ["ui.bootstrap"])
-        .controller("uhv", function ($scope, $http) {
-          $http.get("Trouble.json").then(
-            function successCallback(response) {
-              $scope.codes = response.data
-              console.log("Motor Rated : ")
-              console.log(response.data)
-            },
-            function errorCallback(response) {
-              console.log("Unable to perform get request")
-            }
-          )
-        })
-        .filter("myfilter", function () {
-          return function (x) {
-            var i,
-              c,
-              txt = ""
-            for (i = 0; i < x.length; i++) {
-              c = x[i]
 
-              c = c.toUpperCase()
+<head>
+  <title>LV VSD Trouble Shooting System</title>
+  <meta name="description" content="Trouble Shooting LV VSD ACS800" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #e74c3c;
+      --success-color: #27ae60;
+      --warning-color: #f39c12;
+      --light-bg: #ecf0f1;
+      --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --border-radius: 8px;
+    }
 
-              txt += c
-            }
-            return txt
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px 0;
+    }
+
+    .main-container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      padding: 30px;
+      margin: 20px auto;
+      max-width: 1200px;
+    }
+
+    .header-section {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      padding: 30px;
+      border-radius: var(--border-radius);
+      text-align: center;
+      margin-bottom: 30px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .header-content {
+      flex: 1;
+      text-align: center;
+      min-width: 300px;
+    }
+
+    .header-image {
+      flex-shrink: 0;
+    }
+
+    .header-image img {
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .header-image img:hover {
+      transform: scale(1.05);
+    }
+
+    .header-section h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin: 0;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-section .subtitle {
+      font-size: 1.2rem;
+      margin-top: 10px;
+      opacity: 0.9;
+    }
+
+    .image-gallery {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+
+    .image-card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 20px;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .image-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .image-card img {
+      border-radius: var(--border-radius);
+      max-width: 100%;
+      height: auto;
+    }
+
+    .search-section {
+      background: var(--light-bg);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-bottom: 25px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .search-title {
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+      border-bottom: 3px solid var(--secondary-color);
+      padding-bottom: 10px;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
+
+    .custom-table {
+      margin: 0;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .custom-table thead th {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      font-weight: 600;
+      padding: 18px 15px;
+      border: none;
+      text-align: left;
+      font-size: 1rem;
+    }
+
+    .custom-table thead th:first-child {
+      border-top-left-radius: var(--border-radius);
+    }
+
+    .custom-table thead th:last-child {
+      border-top-right-radius: var(--border-radius);
+    }
+
+    .filter-row {
+      background: #f8f9fa !important;
+      border-bottom: 2px solid #dee2e6;
+    }
+
+    .filter-row th {
+      padding: 15px !important;
+      background: #f8f9fa !important;
+      color: var(--primary-color) !important;
+    }
+
+    .form-control {
+      border-radius: var(--border-radius);
+      border: 2px solid #e0e0e0;
+      padding: 12px 15px;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+    }
+
+    .form-control:focus {
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+      outline: none;
+    }
+
+    .custom-table tbody tr {
+      transition: all 0.3s ease;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .custom-table tbody tr:hover {
+      background-color: #f8f9fa;
+      transform: scale(1.01);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-table tbody td {
+      padding: 18px 15px;
+      vertical-align: middle;
+      border: none;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .custom-table tbody td:first-child {
+      font-weight: bold;
+      color: var(--secondary-color);
+      text-align: center;
+      width: 60px;
+    }
+
+    .error-code {
+      background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      display: inline-block;
+      text-align: center;
+      min-width: 120px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .cause-text {
+      color: var(--warning-color);
+      font-weight: 500;
+    }
+
+    .solution-text {
+      color: var(--success-color);
+      font-weight: 500;
+    }
+
+    .date-display {
+      background: var(--primary-color);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      display: inline-block;
+      margin: 20px 0;
+      font-weight: 500;
+      box-shadow: var(--card-shadow);
+    }
+
+    @media (max-width: 768px) {
+      .header-section {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .header-section h1 {
+        font-size: 2rem;
+      }
+
+      .header-image {
+        order: 2;
+      }
+
+      .header-content {
+        order: 1;
+      }
+
+      .image-gallery {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .custom-table {
+        font-size: 0.85rem;
+      }
+
+      .form-control {
+        font-size: 0.9rem;
+        padding: 10px 12px;
+      }
+    }
+
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.8/angular.min.js"></script>
+  <script src="https://morgul.github.io/ui-bootstrap4/ui-bootstrap-tpls-3.0.6.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
+  <script>
+    angular
+      .module("app", ["ui.bootstrap"])
+      .controller("uhv", function ($scope, $http) {
+        // Loading state
+        $scope.loading = true
+
+        $http.get("Trouble.json").then(
+          function successCallback(response) {
+            $scope.codes = response.data
+            $scope.loading = false
+            console.log("✅ Data loaded successfully:")
+            console.log(response.data)
+
+            // Add fade-in animation to table rows
+            setTimeout(() => {
+              const rows = document.querySelectorAll('tbody tr')
+              rows.forEach((row, index) => {
+                row.style.animationDelay = `${index * 0.05}s`
+                row.classList.add('fade-in')
+              })
+            }, 100)
+          },
+          function errorCallback(response) {
+            console.error("❌ Unable to load data")
+            $scope.loading = false
+            $scope.error = "ไม่สามารถโหลดข้อมูลได้ กรุณาตรวจสอบไฟล์ Trouble.json"
           }
-        })
-    </script>
-  </head>
+        )
 
-  <body class="container">
-    <p id="demo"></p>
-    <nav style="text-align: center">
-      <img
-        src="img/ACS800_LV.jpeg"
-        alt="umc_pic"
-        width="350px"
-        height="250px"
-      />
-      <img src="img/ACS800.webp" alt="display" width="250px" height="250px" />
-    </nav>
+        // Initialize search filters
+        $scope.s = {}
+      })
+      .filter("myfilter", function () {
+        return function (x) {
+          var i,
+            c,
+            txt = ""
+          for (i = 0; i < x.length; i++) {
+            c = x[i]
+
+            c = c.toUpperCase()
+
+            txt += c
+          }
+          return txt
+        }
+      })
+  </script>
+</head>
+
+<body>
+  <div class="main-container">
+    <!-- Header Section -->
+    <div class="header-section">
+      <!-- Left Image -->
+      <div class="header-image">
+        <img src="img/ACS800_LV.jpeg" alt="ACS800 LV Drive" width="140px" height="150px" />
+      </div>
+
+      <!-- Center Content -->
+      <div class="header-content">
+        <h1>ระบบแก้ไขปัญหา LV VSD</h1>
+        <p class="subtitle">Trouble Shooting System for ACS800 Low Voltage Variable Speed Drive</p>
+        <div class="date-display" id="demo"></div>
+      </div>
+
+      <!-- Right Image -->
+      <div class="header-image">
+        <img src="img/ACS800.webp" alt="ACS800 Display" width="105px" height="150px" />
+      </div>
+    </div>
+
+    <!-- Image Gallery (ซ่อนไว้เดี๋ยวนี้เพราะรูปย้ายไป header แล้ว) -->
+    <div class="image-gallery" style="display: none;">
+      <div class="image-card">
+        <img src="img/ACS800_LV.jpeg" alt="ACS800 LV Drive" width="180px" height="130px" />
+      </div>
+      <div class="image-card">
+        <img src="img/ACS800.webp" alt="ACS800 Display" width="130px" height="130px" />
+      </div>
+    </div>
 
     <script>
       const d = new Date()
-      document.getElementById("demo").innerHTML = d
+      const options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }
+      document.getElementById("demo").innerHTML = '📅 ' + d.toLocaleDateString('th-TH', options);
     </script>
-    <div ng-app="app" ng-controller="uhv">
-      <h2 class="text-center mt-2" style="background-color: rgb(237, 80, 230)">
-        ระบบค้นหา : Trouble Shooting LV VSD ACS800
-      </h2>
-      <div class="row">
-        <div class="col-lg-12">
-          <table class="table table-hover">
+    <div ng-app="app" ng-controller="uhv" class="fade-in">
+      <!-- Search Section -->
+      <div class="search-section">
+        <h2 class="search-title">
+          🔍 ค้นหาข้อมูลการแก้ไขปัญหา
+        </h2>
+
+        <!-- Loading Spinner -->
+        <div class="loading-spinner" ng-show="!codes">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <p>กำลังโหลดข้อมูล...</p>
+        </div>
+
+        <!-- Search Table -->
+        <div class="table-container" ng-show="codes">
+          <table class="table custom-table">
             <thead>
-              <tr
-                class="text-start"
-                style="background-color: rgb(100, 226, 207)"
-              >
-                <th scope="col"></th>
-                <th scope="col">Error Code</th>
-                <th scope="col">Cause : สาเหตุที่เป็นไปได้?</th>
-                <th scope="col">What to do? : วิธีการแก้ไข?</th>
+              <tr>
+                <th scope="col" style="width: 80px;">#</th>
+                <th scope="col" style="width: 200px;">🚨 Error Code</th>
+                <th scope="col">⚠️ Cause (สาเหตุ)</th>
+                <th scope="col">🔧 Solution (วิธีแก้ไข)</th>
               </tr>
             </thead>
-            <tbody class="text-start">
-              <tr style="background-color: rgb(212, 220, 220)">
+            <tbody>
+              <tr class="filter-row">
                 <th scope="col"></th>
-                <th scope="col" class="text-start">
-                  <input
-                    ng-model="s.Warning"
-                    placeholder="Error Message"
-                    class="form-control input-md"
-                  />
+                <th scope="col">
+                  <input ng-model="s.Warning" placeholder="🔍 ค้นหา Error Code..." class="form-control" />
                 </th>
                 <th scope="col">
-                  <input
-                    ng-model="s.Cause"
-                    placeholder="ค้นตามสาเหตุ Cause"
-                    class="form-control input-md"
-                  />
+                  <input ng-model="s.Cause" placeholder="🔍 ค้นหาตามสาเหตุ..." class="form-control" />
                 </th>
-
                 <th scope="col">
-                  <input
-                    ng-model="s.What_todo"
-                    placeholder="การตรวจสอบ / วิธีการแก้ไข : What to do?"
-                    class="form-control input-md"
-                  />
+                  <input ng-model="s.What_todo" placeholder="🔍 ค้นหาวิธีการแก้ไข..." class="form-control" />
                 </th>
               </tr>
-              <tr ng-repeat=" r in  codes.Troublelist | filter:s |limitTo: 30">
-                <td>{{ $index+1}}</td>
-                <td>{{ r.Warning}}</td>
-                <td>{{ r.Cause}}</td>
-                <td>{{ r.What_todo}}</td>
+              <tr ng-repeat="r in codes.Troublelist | filter:s | limitTo: 50"
+                ng-class="{'table-warning': $index % 2 === 0}">
+                <td><span class="badge badge-primary">{{ $index + 1 }}</span></td>
+                <td>
+                  <span class="error-code">{{ r.Warning }}</span>
+                </td>
+                <td class="cause-text">{{ r.Cause }}</td>
+                <td class="solution-text">{{ r.What_todo }}</td>
+              </tr>
+
+              <!-- No Results Message -->
+              <tr ng-show="(codes.Troublelist | filter:s).length === 0">
+                <td colspan="4" class="text-center text-muted" style="padding: 40px;">
+                  <h4>😕 ไม่พบข้อมูลที่ค้นหา</h4>
+                  <p>กรุณาลองใช้คำค้นหาอื่น หรือตรวจสอบการสะกดคำ</p>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
+
+        <!-- Results Counter -->
+        <div class="text-center mt-3" ng-show="codes">
+          <span class="badge badge-info badge-lg">
+            📊 แสดงผลลัพธ์: {{ (codes.Troublelist | filter:s | limitTo: 50).length }}
+            จากทั้งหมด {{ codes.Troublelist.length }} รายการ
+          </span>
+        </div>
       </div>
     </div>
-  </body>
+
+    <!-- Footer -->
+    <div class="text-center mt-4 mb-3">
+      <p class="text-muted">
+        <small>© 2025 LV VSD Trouble Shooting System | Powered by AngularJS & Bootstrap</small>
+      </p>
+    </div>
+
+  </div>
+</body>
+
 </html>
